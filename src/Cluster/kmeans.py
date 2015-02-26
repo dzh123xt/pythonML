@@ -18,7 +18,6 @@ class KMeans(ClusterBase):
         for i in range(N):
             for k in range(K):
                 norm = getSquareNorm(data[i], Mean[k])
-                #print norm
                 if(norm < min):
                     index = k
                     min = norm
@@ -30,53 +29,33 @@ class KMeans(ClusterBase):
     @staticmethod
     def estimateCenter(data, label, K):
         D = data.shape[1]
-        Mean = np.zeros((K,D))
+        Mean = np.mat(np.zeros((K,D)))
         for j in range(K):
             DataInClusterJ = data[np.nonzero(label[:,0] == j)]
             Mean[j,:] = np.mean(DataInClusterJ, axis=0)
         return Mean
 
     @staticmethod
-    def genRandMean(data, K):
-        D = data.shape[1]
-        RandMean = np.mat(np.zeros((K, D)))
-        for i in range(D):
-            LowValue = np.min(data[:,i])
-            RangeValue = float(np.max(data[:,i]) - LowValue)
-            RandMean[:,i] = LowValue + RangeValue * np.random.rand(K, 1)
-        return RandMean
-
-    @staticmethod
-    def isVectorConverge(v1, v2):
-        threshold = 0.0001
-        if((abs(v1 - v2) > threshold).all() == False):
-            return True
-        else:
-            return False
-
-    @staticmethod
     def runKmeans(data, K):
         D = data.shape[1]
         N = data.shape[0]
         Z = np.zeros((N, 1))
-        Mean = KMeans.genRandMean(data, K)
+        Mean = ClusterBase.genRandMean(data, K)
         print 'Initial Mean: '
         print Mean
         count = 0
-        Z_Old = np.zeros((N,1))
+        Mean_Old = np.mat(np.zeros((K, D)))
         while(True):
             print '++++++++++++++++++++++++++++++++'
             print count
-
             Z = KMeans.clusterAssignment(data, Mean)
             Mean = KMeans.estimateCenter(data, Z, K)
-
             print Mean
             count +=1
-            if(KMeans.isVectorConverge(Z, Z_Old)):
+            if(KMeans.isVectorConverge(Mean, Mean_Old, 0.0001)):
                 print 'Converge'
-                print Z.transpose()
                 break
+            Mean_Old = Mean
         return Z.reshape(-1).astype(int).tolist()
 
     @staticmethod

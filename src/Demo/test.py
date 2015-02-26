@@ -11,13 +11,13 @@ if __name__ == '__main__':
     dataC_X = str(open('../data/ClusterData/cluster_data_dataC_X.txt', 'r').read()).split()
     dataC_Y = str(open('../data/ClusterData/cluster_data_dataC_Y.txt', 'r').read()).split()
 
-    showLabeledDiagram(dataA_X, dataA_Y, 'Data A')
+    #showLabeledDiagram(dataA_X, dataA_Y, 'Data A')
     #showLabeledDiagram(dataB_X, dataB_Y, 'Data B')
     #showLabeledDiagram(dataC_X, dataC_Y, 'Data C')
 
     #Kmeans-----------------------------------------------------------------
 
-    #KMeans.testWithKmeans(dataA_X, 'Data A', 4)
+    KMeans.testWithKmeans(dataA_X, 'Data A', 4)
     #testWithKmeans(dataA_X, 'Data A')
     #testWithKmeans(dataB_X, 'Data B')
     #testWithKmeans(dataC_X, 'Data C')
