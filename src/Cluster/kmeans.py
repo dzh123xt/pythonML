@@ -62,4 +62,4 @@ class KMeans(ClusterBase):
     def testWithKmeans(data, title, K):
         X = RawData2XYArray(data)
         Z = KMeans.runKmeans(X, K)
-        showDiagramInCluster(X, Z, "Kmeans")
+        showDiagramInCluster(X, Z, "Kmeans_" + title)

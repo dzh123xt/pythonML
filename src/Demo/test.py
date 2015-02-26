@@ -2,6 +2,7 @@ __author__ = 'dengzhihong'
 
 from src.Cluster.base import *
 from src.Cluster.kmeans import *
+from src.Cluster.em import *
 
 if __name__ == '__main__':
     dataA_X = str(open('../data/ClusterData/cluster_data_dataA_X.txt', 'r').read()).split()
@@ -17,16 +18,15 @@ if __name__ == '__main__':
 
     #Kmeans-----------------------------------------------------------------
 
-    KMeans.testWithKmeans(dataA_X, 'Data A', 4)
-    #testWithKmeans(dataA_X, 'Data A')
-    #testWithKmeans(dataB_X, 'Data B')
-    #testWithKmeans(dataC_X, 'Data C')
+    #KMeans.testWithKmeans(dataA_X, 'Data A', 4)
+    #KMeans.testWithKmeans(dataB_X, 'Data B', 4)
+    #KMeans.testWithKmeans(dataC_X, 'Data C', 4)
 
     #EM---------------------------------------------------------------------
 
-    #testWithEM(dataA_X, 'Data A')
-    #testWithEM(dataB_X, 'Data B')
-    #testWithEM(dataC_X, 'Data C')
+    EM.testWithEM(dataA_X, 'Data A', 4)
+    #EM.testWithEM(dataB_X, 'Data B', 4)
+    #EM.testWithEM(dataC_X, 'Data C', 4)
 
     #Mean-shift-------------------------------------------------------------
     #testWithMeanShift(dataA_X, 'Data A')

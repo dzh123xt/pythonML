@@ -10,8 +10,8 @@ import random
 class EM(ClusterBase):
 
     @staticmethod
-    def E_Step(X, Mean, Cov, Pai, choice):
-        K = len(Mean)
+    def E_Step(X, Mean, Cov, Pai):
+        K = Mean.shape[0]
         N = X.shape[0]
         Z = np.zeros((N, K))
         Temp = 0
@@ -27,7 +27,6 @@ class EM(ClusterBase):
                 '''
                 #a = Pai[k] * multivariateGaussian( transpose(X[i]), transpose(Mean[k]), Cov[k])
                 a = Pai[k] * multivariateGaussian( X[i], Mean[k], Cov[k])
-                #print a
                 Temp += a
             Sum.append(Temp)
             Temp = 0
@@ -58,7 +57,7 @@ class EM(ClusterBase):
     def M_Step(X, Z):
         N = Z.shape[0]
         K = Z.shape[1]
-        D = X.shape[2]
+        D = X.shape[1]
         Mean = np.zeros((K, 1, D))
         Cov = np.zeros((K, D, D))
         TempCov = np.zeros((D, D))
@@ -111,40 +110,13 @@ class EM(ClusterBase):
                 Q += Z[i][j] * multivariateGaussian(X[i], Mean[j], Cov[j]) * Pai[j]
         return Q
 
-    # This will generate a array of mean. each line is a mean vector
     @staticmethod
-    def genRandMean(D, K):
-        Mean = np.zeros((K, 1, D))
-        Low = -3
-        Up = 3
-        RandList = []
-        for i in range(K):
-            for j in range(D):
-                rand = random.uniform(Low, Up)
-                RandList.append(rand)
-            Mean[i] = np.array(RandList)
-            RandList = []
-        return Mean
-
-    @staticmethod
-    def genRandCov(D, K):
-        row = []
-        col = []
-        LowBound = 0.1
-        UpBound = 5
+    def genRandCov(data, K):
+        D = data.shape[1]
+        o_cov =  np.cov(data.transpose())
         Cov = np.zeros((K, D, D))
-        index = 0
         for k in range(K):
-            for d in range(D*D):
-                rand = random.uniform(LowBound,UpBound)
-                if(d == index):
-                    row.append(rand)
-                    index += (D + 1)
-                else:
-                    row.append(0)
-            Cov[k] = np.array(row).reshape(D, D)
-            row = []
-            index = 0
+           Cov[k] = o_cov + np.random.rand(2,2)
         return Cov
 
     @staticmethod
@@ -157,25 +129,22 @@ class EM(ClusterBase):
             p = random.uniform(0, 1.0/K - 0.05)
             Pai[i] -= p
             Pai[K - 1 - i] += p
-        return Pai
+        return np.array(Pai)
 
     @staticmethod
-    def runEM(X, K, iteration):
-        D = X.shape[2]
-        N = X.shape[0]
-        Z = np.zeros((N,K))
+    def runEM(data, K, iteration):
+        D = data.shape[1]
+        N = data.shape[0]
+        Z = np.zeros((N,1))
         # Generate initial Mean which contains 4 matrix of 2x2
-        Mean = EM.genRandMean(D, K)
+        Mean = ClusterBase.genRandMean(data, K)
         # Generate initial Cov
-        Cov = EM.genRandCov(D, K)
+        Cov = EM.genRandCov(data, K)
         # Generate pai
-        print 'Mean: '
-        print Mean
-        print 'Cov: '
-        print Cov
+        print 'Mean: \n', Mean
+        print 'Cov: \n', Cov
         Pai = EM.genPai(K)
-        print 'Pai:'
-        print Pai
+        print 'Pai: \n', Pai
         count = 0
         Q_old = -9999999
         Q_new = 0
@@ -184,16 +153,12 @@ class EM(ClusterBase):
             print '+++++++++++++++++++++++++++++++++++++++++'
             #displayData(Z, Mean, Cov, Pai, 'Old Parameter')
             print 'E-Step'
-            if(count == 1):
-                choice = ''
-            else:
-                choice = ''
-            Z = EM.E_Step(X, Mean, Cov, Pai, choice)
+            Z = EM.E_Step(data, Mean, Cov, Pai)
             #print Z
             print 'M-Step'
-            Mean, Cov, Pai = EM.M_Step(X, Z)
+            Mean, Cov, Pai = EM.M_Step(data, Z)
             #displayData(Z, Mean, Cov, Pai, 'New Parameter')
-            Q_new =  EM.getQ(X, Z, Mean, Cov, Pai)
+            Q_new =  EM.getQ(data, Z, Mean, Cov, Pai)
             print 'Q = ', Q_new
             '''
             if(Q_new > Q_old  and (Q_new - Q_old < 0.000000000001)):
@@ -206,13 +171,11 @@ class EM(ClusterBase):
                 break
             count += 1
 
-        Z_Normal = np.zeros((N,K))
-        print Z
+        Z_Normal = np.zeros((N,1))
         for i in range(N):
             index = EM.findMax(Z[i])
-            Z_Normal[i][index] = 1
-        print Z_Normal
-        return Z_Normal
+            Z_Normal[i] = index
+        return Z_Normal.astype(int).reshape(-1).tolist()
 
     @staticmethod
     def findMax(list):
@@ -224,3 +187,9 @@ class EM(ClusterBase):
                 Max = list[i]
                 MaxIndex = i
         return MaxIndex
+
+    @staticmethod
+    def testWithEM(data, title, K):
+        X = RawData2XYArray(data)
+        Z = EM.runEM(X, K, 100)
+        showDiagramInCluster(X, Z, "EM_" + title)
