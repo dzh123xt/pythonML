@@ -2,8 +2,11 @@ __author__ = 'dengzhihong'
 
 from src.Cluster.base import *
 import numpy as np
+from src.Methods.math_methods import *
+from src.Methods.process_data import *
+from src.Methods.draw_diagram import *
 
-class KMeans(CommonMethod):
+class KMeans(ClusterBase):
     @staticmethod
     def clusterAssignment(data, Mean):
         D = data.shape[1]
@@ -14,7 +17,7 @@ class KMeans(CommonMethod):
         index = -1
         for i in range(N):
             for k in range(K):
-                norm = KMeans.getSquareNorm(data[i], Mean[k])
+                norm = getSquareNorm(data[i], Mean[k])
                 #print norm
                 if(norm < min):
                     index = k
@@ -78,10 +81,10 @@ class KMeans(CommonMethod):
 
     @staticmethod
     def showDiagramInCluster(X, Z, title="Kmeans"):
-        CommonMethod.showDiagramInCluster(X, Z, title)
+        showDiagramInCluster(X, Z, title)
 
     @staticmethod
     def testWithKmeans(data, title, K):
-        X = CommonMethod.preprocessRawData(data)
+        X = preprocessRawData(data)
         Z = KMeans.runKmeans(X, K)
         KMeans.showDiagramInCluster(X, Z)
