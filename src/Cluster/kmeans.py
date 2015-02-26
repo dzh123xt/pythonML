@@ -80,11 +80,7 @@ class KMeans(ClusterBase):
         return Z.reshape(-1).astype(int).tolist()
 
     @staticmethod
-    def showDiagramInCluster(X, Z, title="Kmeans"):
-        showDiagramInCluster(X, Z, title)
-
-    @staticmethod
     def testWithKmeans(data, title, K):
-        X = preprocessRawData(data)
+        X = RawData2XYArray(data)
         Z = KMeans.runKmeans(X, K)
-        KMeans.showDiagramInCluster(X, Z)
+        showDiagramInCluster(X, Z, "Kmeans")

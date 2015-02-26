@@ -2,22 +2,13 @@ __author__ = 'dengzhihong'
 
 import numpy as np
 
-def str2FloatList(stringlist):
-    floatlist = []
-    for i in range(0, len(stringlist)):
-        floatlist.append(float(stringlist[i]))
-    return floatlist
+def RawLabel2IntList(label):
+    return np.array(map(int, map(float, label[:]))) - 1
 
-def str2IntList(stringlist):
-    intlist = []
-    for i in range(0, len(stringlist)):
-        intlist.append(int(float(stringlist[i])))
-    return intlist
-
-def getCoordFromList(data):
+def RawData2FloatXYList(data):
     R = 2
     L = len(data)
-    data = np.array(str2FloatList(data)).reshape(R,L/R)
+    data = np.array(map(float, data[:])).reshape(R,L/R)
     X = []
     Y = []
     for i in range(data.shape[1]):
@@ -25,6 +16,6 @@ def getCoordFromList(data):
         Y.append(data[1][i])
     return X,Y
 
-def preprocessRawData(data):
-    dataMat = np.array(str2FloatList(data)).reshape(2, len(data)/2)
+def RawData2XYArray(data):
+    dataMat = np.array(map(float, data[:])).reshape(2, len(data)/2)
     return np.mat(dataMat).transpose()
