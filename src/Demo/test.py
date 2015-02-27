@@ -3,6 +3,7 @@ __author__ = 'dengzhihong'
 from src.Cluster.base import *
 from src.Cluster.kmeans import *
 from src.Cluster.em import *
+from src.Cluster.mean_shift import *
 
 if __name__ == '__main__':
     dataA_X = str(open('../data/ClusterData/cluster_data_dataA_X.txt', 'r').read()).split()
@@ -24,12 +25,12 @@ if __name__ == '__main__':
 
     #EM---------------------------------------------------------------------
 
-    EM.testWithEM(dataA_X, 'Data A', 4)
+    #EM.testWithEM(dataA_X, 'Data A', 4)
     #EM.testWithEM(dataB_X, 'Data B', 4)
     #EM.testWithEM(dataC_X, 'Data C', 4)
 
     #Mean-shift-------------------------------------------------------------
-    #testWithMeanShift(dataA_X, 'Data A')
+    MeanShift.testWithMeanShift(dataA_X, 'Data A', 1)
     #testWithMeanShift(dataB_X, 'Data B')
     #testWithMeanShift(dataC_X, 'Data C')
 
