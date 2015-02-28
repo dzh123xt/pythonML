@@ -59,3 +59,19 @@ def showLabeledDiagram(dataA_X, dataA_Y, title):
     for k in range(K):
         plt.plot(ClusterX[k], ClusterY[k], ColorPattern[k], label = 'c' + str(k))
     plt.show()
+
+def showMeanErrorDiagram(x, y, title, method):
+    plt.figure().add_subplot(111).set_title(title + method, fontsize = 18)
+    plt.plot(x, y, 'bo-', label = 'MeanError')
+    plt.axis([0,100,0,20])
+    plt.show()
+
+def showPredictionDiagramWithReduction(sampx, sampy, polyx, polyy, prediction, K, directory, ReducitionRate, method):
+    title =  'K = ' + str(K) + ' ReducitionRate = ' + str(ReducitionRate) + '% Method = ' + method
+    plt.figure().add_subplot(111).set_title(title, fontsize = 18)
+    plt.plot(map(float, polyx), prediction,'r-', label='prediction',linewidth=1)
+    plt.plot(map(float, polyx), map(float, polyy), 'g-',label='real',linewidth=0.8)
+    plt.plot(map(float, sampx), map(float, sampy), 'ko',label='sample')
+    plt.legend()
+    plt.show()
+    plt.clf()
