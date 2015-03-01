@@ -46,19 +46,6 @@ class RegressionBase(object):
             y.append(RegressionBase.getPredictionValue(element, theta, K))
         return y
 
-    @staticmethod
-    def getPredictionVariance(star_scalar_x, Sigma, theta, K):
-        Fai = np.mat(RegressionBase.getFaiList(star_scalar_x, K))
-        return float(np.dot(np.dot(Fai,Sigma),theta))
-
-    @staticmethod
-    def getPredictionVarianceList(star_list_x, Sigma, theta, K):
-        x = RegressionBase.toFloatList(star_list_x)
-        y = []
-        for element in x:
-            y.append(RegressionBase.getPredictionVariance(element, Sigma, theta, K))
-        return y
-
     # This method will turn string list to float list, which is highly useful
     @staticmethod
     def toFloatList(stringlist):

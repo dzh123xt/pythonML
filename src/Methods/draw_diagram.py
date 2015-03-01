@@ -2,6 +2,7 @@ __author__ = 'dengzhihong'
 
 import matplotlib.pyplot as plt
 from src.Methods.process_data import *
+from src.Regression.br import *
 
 def showDiagram(x, y, title="", MethodName=""):
     ax = plt.figure().add_subplot(111)
@@ -65,13 +66,36 @@ def showMeanErrorDiagram(x, y, title, method):
     plt.plot(x, y, 'bo-', label = 'MeanError')
     plt.axis([0,100,0,20])
     plt.show()
+    plt.clf()
 
-def showPredictionDiagramWithReduction(sampx, sampy, polyx, polyy, prediction, K, directory, ReducitionRate, method):
+def showPredictionDiagramWithReduction(sampx, sampy, polyx, polyy, prediction, K, ReducitionRate, method):
     title =  'K = ' + str(K) + ' ReducitionRate = ' + str(ReducitionRate) + '% Method = ' + method
     plt.figure().add_subplot(111).set_title(title, fontsize = 18)
     plt.plot(map(float, polyx), prediction,'r-', label='prediction',linewidth=1)
     plt.plot(map(float, polyx), map(float, polyy), 'g-',label='real',linewidth=0.8)
     plt.plot(map(float, sampx), map(float, sampy), 'ko',label='sample')
+    plt.legend()
+    plt.show()
+    plt.clf()
+
+def showRegressionDiagramExceptBR(sampx, sampy, polyx, polyy, prediction, title):
+    plt.figure().add_subplot(111).set_title(title, fontsize = 18)
+    plt.plot(map(float, polyx), prediction,'r-', label='prediction',linewidth=1)
+    plt.plot(map(float, polyx), map(float, polyy), 'g-',label='real',linewidth=0.8)
+    plt.plot(map(float, sampx), map(float, sampy), 'ko',label='sample')
+    plt.legend()
+    plt.show()
+
+def showRegressionDiagramBR(sampx, sampy, polyx, polyy, prediction, theta, sigma, K, title):
+    plt.figure().add_subplot(111).set_title(title, fontsize = 18)
+    plt.plot(map(float, polyx), prediction,'r-', label='prediction',linewidth=1)
+    plt.plot(map(float, polyx), map(float, polyy), 'g-',label='real',linewidth=0.8)
+    plt.plot(map(float, sampx), map(float, sampy), 'ko',label='sample')
+    variance = BR.getPredictionVarianceList(polyx, sigma, theta, K)
+    add_variance = (np.array(prediction) + np.array(variance)).tolist()
+    sub_variance = (np.array(prediction) + np.array(variance)).tolist()
+    plt.plot(map(float, polyx),add_variance,'b-', label = 'prediction + variance', linewidth = 1)
+    plt.plot(map(float, polyx),sub_variance,'g--',  label = 'prediction - variance', linewidth = 2)
     plt.legend()
     plt.show()
     plt.clf()

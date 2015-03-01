@@ -9,14 +9,14 @@ if __name__ == '__main__':
     polyy = str(open('../data/RegressionData/polydata_data_polyy.txt', 'r').read()).split()
 
     K = 5
-    MethodList = ['LS','RLS','LASSO','RR','BR']
-
+    #MethodList = ['LS','RLS','LASSO','RR','BR']
+    MethodList = ['LASSO']
     # problem b
-    testWithRegression(sampx, sampy, polyx, polyy, K, MethodList, 'show')
+    testWithRegression(sampx, sampy, polyx, polyy, K, MethodList)
     # problem c
-    testWithReduction(sampx, sampy, polyx, polyy, K, MethodList, 'show')
+    #testWithReduction(sampx, sampy, polyx, polyy, K, MethodList)
     # problem d
-    testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList, 'show')
+    #testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList)
     # problem e
-    K = 20
-    testWithHigherK(sampx, sampy, polyx, polyy, K, MethodList, 'save')
+    #K = 20
+    #testWithHigherK(sampx, sampy, polyx, polyy, K, MethodList)

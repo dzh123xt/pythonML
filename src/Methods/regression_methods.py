@@ -6,12 +6,14 @@ from src.Regression.rr import *
 from src.Regression.br import *
 from src.Regression.lasso import *
 import numpy as np
+from src.Methods.draw_diagram import *
+import random
 
-def testWithRegression(sampx, sampy, polyx, polyy, K, MethodList, choice):
+def testWithRegression(sampx, sampy, polyx, polyy, K, MethodList):
      y = map(float, polyy)
      for method in MethodList:
         SquareMean = 0
-        prediction = Regression(sampx, sampy, polyx, polyy, K, method, 'b', choice)
+        prediction = Regression(sampx, sampy, polyx, polyy, K, method)
 
         for i in range(len(prediction)):
             SquareMean += (prediction[i] - y[i])**2
@@ -26,8 +28,7 @@ def testWithReduction(sampx, sampy, polyx, polyy, K, MethodList, choice):
     for rate in ReductionRateList:
         for method in MethodList:
             ResultList.append( regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, rate, method, choice) )
-    #Mean Error
-    x = array(ResultList).reshape(len(ReductionRateList), len(MethodList)).tolist()
+    x = np.array(ResultList).reshape(len(ReductionRateList), len(MethodList)).tolist()
 
     for row in x:
         for col in row:
@@ -38,28 +39,27 @@ def testWithReduction(sampx, sampy, polyx, polyy, K, MethodList, choice):
         MeanError = []
         for i in range(len(ReductionRateList)):
             MeanError.append(x[i][j])
-        drawMeanErrorDiagram(ReductionRateList, MeanError, 'Average MeanError, Method = ', MethodList[j])
+        showMeanErrorDiagram(ReductionRateList, MeanError, 'Average MeanError, Method = ', MethodList[j])
 
 def testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList, choice):
     N = len(sampx)
     Num = 5
     randlist = []
     for i in range(Num):
-        r = randint(0, N-1)
+        r = random.randint(0, N-1)
         while(randlist.count(r) != 0):
-            r = randint(0,N-1)
+            r = random.randint(0,N-1)
         randlist.append(r)
     for i in randlist:
         sampy[i] = str(float(sampy[i]) + 200)
     for method in MethodList:
-        Regression(sampx, sampy, polyx, polyy, K, method, 'd', choice)
+        Regression(sampx, sampy, polyx, polyy, K, method)
 
 def testWithHigherK(sampx, sampy, polyx, polyy, K, MethodList, choice):
     for method in MethodList:
-        Regression(sampx, sampy, polyx, polyy, K, method, 'e', choice)
+        Regression(sampx, sampy, polyx, polyy, K, method)
 
-def Regression(sampx, sampy, polyx, polyy, K, method, directory, choice):
-    sigma = 0
+def Regression(sampx, sampy, polyx, polyy, K, method):
     if(method == 'LS'):
         theta = LS.run(sampx, sampy, K)
     elif(method == 'RLS'):
@@ -73,40 +73,27 @@ def Regression(sampx, sampy, polyx, polyy, K, method, directory, choice):
     else:
         print 'No method'
         return 0
-    prediction = getPredictionValueList(polyx, theta, K)
-    plt.figure().add_subplot(111).set_title(method ,fontsize = 18)
-    plt.plot(toFloatList(polyx),prediction,'r-',label='prediction',linewidth=1)
-    plt.plot(toFloatList(polyx),toFloatList(polyy),'g-',label='real',linewidth=0.8)
-    plt.plot(toFloatList(sampx),toFloatList(sampy),'ko',label='sample')
+    prediction = RegressionBase.getPredictionValueList(polyx, theta, K)
     if(method == 'BR'):
-        variance = getPredictionVarianceList(polyx, sigma, theta, K)
-        add_variance = addList(prediction, variance)
-        sub_variance = substractList(prediction, variance)
-        plt.plot(toFloatList(polyx),add_variance,'b-', label = 'prediction + variance', linewidth = 1)
-        plt.plot(toFloatList(polyx),sub_variance,'g--',  label = 'prediction - variance', linewidth = 2)
-    plt.legend()
-    if(choice == 'save'):
-        plt.savefig('D:\\PA-1-data-text\\Result\\' + directory + '\\' + method + '.jpg', dpi=200)
-    elif(choice == 'show'):
-        plt.show()
+        showRegressionDiagramBR(sampx, sampy, polyx, polyy, prediction, theta, sigma, K, method)
     else:
-        'Wrong'
+        showRegressionDiagramExceptBR(sampx, sampy, polyx, polyy, prediction,  method)
     return prediction
 
-def regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, ReducitionRate, method, choice):
+def regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, ReducitionRate, method):
     print str(K) + 'th ' + 'TestTimes = ' + str(TestTimes) + ' ReductionRate = ' + str(ReducitionRate) + '% Method = ' + method
     MeanErrorScalar = 0.0
-    PredictionSum = zeros(len(polyx))
+    PredictionSum = np.zeros(len(polyx))
     for i in range(TestTimes):
         x = sampx[:]
         y = sampy[:]
         Theta, x, y = getThetaWithReduction(x, y, K, ReducitionRate, method)
-        Prediction = getPredictionValueList(polyx, Theta, K)
+        Prediction = BR.getPredictionValueList(polyx, Theta, K)
         #PredictionSum += Prediction
         if(i == 0):
-            drawPredictionDiagramWithReduction(x, y, polyx, polyy, Prediction, K, 'c', ReducitionRate, method, choice)
-        MeanErrorVector = array(strlistToFloatvector(Prediction) - strlistToFloatvector(polyy))
-        MeanErrorScalar += dot(MeanErrorVector.T, MeanErrorVector)
+            showPredictionDiagramWithReduction(x, y, polyx, polyy, Prediction, K, 'c', ReducitionRate)
+        MeanErrorVector = np.array(map(float, Prediction)) - np.array(map(float, polyy))
+        MeanErrorScalar += np.dot(MeanErrorVector.T, MeanErrorVector)
 
     #PredictionSum /= TestTimes
     MeanErrorScalar /= (TestTimes * len(polyy))
@@ -122,9 +109,9 @@ def getThetaWithReduction(sampx, sampy, K, ReductionRate, method):
     new_x = []
     new_y = []
     for i in range(rest):
-        r = randint(0, N-1)
+        r = random.randint(0, N-1)
         while(randlist.count(r) != 0):
-            r = randint(0,N-1)
+            r = random.randint(0,N-1)
         randlist.append(r)
 
     for i in randlist:
@@ -132,15 +119,15 @@ def getThetaWithReduction(sampx, sampy, K, ReductionRate, method):
         new_y.append(sampy[i])
 
     if(method == 'LS'):
-        theta = LS(new_x, new_y, K)
+        theta = LS.run(new_x, new_y, K)
     elif(method == 'RLS'):
-        theta = RLS(new_x, new_y, K)
+        theta = RLS.run(new_x, new_y, K)
     elif(method == 'LASSO'):
-        theta = LASSO(new_x, new_y, K)
+        theta = LASSO.run(new_x, new_y, K)
     elif(method == 'RR'):
-        theta = RR(new_x, new_y, K)
+        theta = RR.run(new_x, new_y, K)
     elif(method == 'BR'):
-        theta, variance = BR(new_x, new_y, K)
+        theta, variance = BR.run(new_x, new_y, K)
     else:
         print 'No method'
         return 0
