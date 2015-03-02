@@ -58,3 +58,9 @@ class RegressionBase(object):
     def run(sampx, sampy, K):
         pass
 
+    @staticmethod
+    def toFloatList(stringlist):
+        floatlist = []
+        for i in range(0, len(stringlist)):
+             floatlist.append(float(stringlist[i]))
+        return floatlist

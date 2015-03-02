@@ -10,24 +10,23 @@ from src.Methods.draw_diagram import *
 import random
 
 def testWithRegression(sampx, sampy, polyx, polyy, K, MethodList):
-     y = map(float, polyy)
+     y = RegressionBase.toFloatList(polyy)
      for method in MethodList:
         SquareMean = 0
         prediction = Regression(sampx, sampy, polyx, polyy, K, method)
-
         for i in range(len(prediction)):
             SquareMean += (prediction[i] - y[i])**2
         SquareMean /= len(prediction)
         print method
         print 'Square Mean Error = ', SquareMean
 
-def testWithReduction(sampx, sampy, polyx, polyy, K, MethodList, choice):
+def testWithReduction(sampx, sampy, polyx, polyy, K, MethodList):
     ResultList = []
     TestTimes = 1
     ReductionRateList = [0, 15, 30, 45, 60, 75, 90]
     for rate in ReductionRateList:
         for method in MethodList:
-            ResultList.append( regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, rate, method, choice) )
+            ResultList.append( regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, rate, method) )
     x = np.array(ResultList).reshape(len(ReductionRateList), len(MethodList)).tolist()
 
     for row in x:
@@ -41,7 +40,7 @@ def testWithReduction(sampx, sampy, polyx, polyy, K, MethodList, choice):
             MeanError.append(x[i][j])
         showMeanErrorDiagram(ReductionRateList, MeanError, 'Average MeanError, Method = ', MethodList[j])
 
-def testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList, choice):
+def testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList):
     N = len(sampx)
     Num = 5
     randlist = []
@@ -55,11 +54,12 @@ def testWithLargeValue(sampx, sampy, polyx, polyy, K, MethodList, choice):
     for method in MethodList:
         Regression(sampx, sampy, polyx, polyy, K, method)
 
-def testWithHigherK(sampx, sampy, polyx, polyy, K, MethodList, choice):
+def testWithHigherK(sampx, sampy, polyx, polyy, K, MethodList):
     for method in MethodList:
         Regression(sampx, sampy, polyx, polyy, K, method)
 
 def Regression(sampx, sampy, polyx, polyy, K, method):
+    sigma = 0
     if(method == 'LS'):
         theta = LS.run(sampx, sampy, K)
     elif(method == 'RLS'):
@@ -91,8 +91,8 @@ def regressionWithReduction(sampx, sampy, polyx, polyy, K, TestTimes, Reducition
         Prediction = BR.getPredictionValueList(polyx, Theta, K)
         #PredictionSum += Prediction
         if(i == 0):
-            showPredictionDiagramWithReduction(x, y, polyx, polyy, Prediction, K, 'c', ReducitionRate)
-        MeanErrorVector = np.array(map(float, Prediction)) - np.array(map(float, polyy))
+            showPredictionDiagramWithReduction(x, y, polyx, polyy, Prediction, K, ReducitionRate, method)
+        MeanErrorVector = np.array(RegressionBase.strlistToFloatvector(Prediction) - RegressionBase.strlistToFloatvector(polyy))
         MeanErrorScalar += np.dot(MeanErrorVector.T, MeanErrorVector)
 
     #PredictionSum /= TestTimes

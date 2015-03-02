@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     K = 5
     #MethodList = ['LS','RLS','LASSO','RR','BR']
-    MethodList = ['LASSO']
+    MethodList = ['RR']
     # problem b
     testWithRegression(sampx, sampy, polyx, polyy, K, MethodList)
     # problem c

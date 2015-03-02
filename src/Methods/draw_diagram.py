@@ -76,7 +76,6 @@ def showPredictionDiagramWithReduction(sampx, sampy, polyx, polyy, prediction, K
     plt.plot(map(float, sampx), map(float, sampy), 'ko',label='sample')
     plt.legend()
     plt.show()
-    plt.clf()
 
 def showRegressionDiagramExceptBR(sampx, sampy, polyx, polyy, prediction, title):
     plt.figure().add_subplot(111).set_title(title, fontsize = 18)
@@ -98,4 +97,3 @@ def showRegressionDiagramBR(sampx, sampy, polyx, polyy, prediction, theta, sigma
     plt.plot(map(float, polyx),sub_variance,'g--',  label = 'prediction - variance', linewidth = 2)
     plt.legend()
     plt.show()
-    plt.clf()
