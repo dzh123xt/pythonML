@@ -9,8 +9,7 @@ if __name__ == '__main__':
     polyy = str(open('../data/RegressionData/polydata_data_polyy.txt', 'r').read()).split()
 
     K = 5
-    #MethodList = ['LS','RLS','LASSO','RR','BR']
-    MethodList = ['RR']
+    MethodList = ['LS','RLS','LASSO','RR','BR']
     # problem b
     testWithRegression(sampx, sampy, polyx, polyy, K, MethodList)
     # problem c
